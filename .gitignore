@@ -1,0 +1,8 @@
+.now
+.terraform/
+build/
+dist/
+node_modules/
+*.auto.tfvars
+infrastructure/terraform.tfstate
+infrastructure/terraform.tfstate.backup
