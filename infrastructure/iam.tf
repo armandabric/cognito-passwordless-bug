@@ -25,7 +25,7 @@ resource "aws_iam_role_policy" "inexperiment-idp-create-auth-challenge-ses" {
       Statement = [
         {
           Action = [
-            "ses:SendTemplatedEmail",
+            "ses:SendEmail",
           ]
           Effect   = "Allow"
           Resource = "*"

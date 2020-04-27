@@ -1,16 +1,15 @@
 // Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import { Injectable, Inject } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
-import { Auth } from 'aws-amplify';
-import { CognitoUser } from 'amazon-cognito-identity-js';
+import { Injectable, Inject } from "@angular/core";
+import { DOCUMENT } from "@angular/common";
+import { Auth } from "aws-amplify";
+import { CognitoUser } from "amazon-cognito-identity-js";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class AuthService {
-
   private cognitoUser: CognitoUser & { challengeParam: { email: string } };
 
   // Get access to window object in the Angular way
@@ -20,7 +19,14 @@ export class AuthService {
   }
 
   public async signIn(email: string) {
-    this.cognitoUser = await Auth.signIn(email);
+    const signInOpts = {
+      username: email,
+      password: undefined,
+      validationData: {
+        foo: "bar",
+      },
+    };
+    this.cognitoUser = await Auth.signIn(signInOpts, undefined, { bar: "baz" });
   }
 
   public async signOut() {
@@ -28,7 +34,10 @@ export class AuthService {
   }
 
   public async answerCustomChallenge(answer: string) {
-    this.cognitoUser = await Auth.sendCustomChallengeAnswer(this.cognitoUser, answer);
+    this.cognitoUser = await Auth.sendCustomChallengeAnswer(
+      this.cognitoUser,
+      answer
+    );
     return this.isAuthenticated();
   }
 
@@ -41,8 +50,8 @@ export class AuthService {
       username: email,
       password: this.getRandomString(30),
       attributes: {
-        name: fullName
-      }
+        name: fullName,
+      },
     };
     await Auth.signUp(params);
   }
@@ -50,11 +59,11 @@ export class AuthService {
   private getRandomString(bytes: number) {
     const randomValues = new Uint8Array(bytes);
     this.window.crypto.getRandomValues(randomValues);
-    return Array.from(randomValues).map(this.intToHex).join('');
+    return Array.from(randomValues).map(this.intToHex).join("");
   }
 
   private intToHex(nr: number) {
-    return nr.toString(16).padStart(2, '0');
+    return nr.toString(16).padStart(2, "0");
   }
 
   public async isAuthenticated() {
@@ -72,5 +81,4 @@ export class AuthService {
     }
     return await Auth.userAttributes(this.cognitoUser);
   }
-
 }
